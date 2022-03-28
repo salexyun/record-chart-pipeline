@@ -1,0 +1,6 @@
+version: 2
+
+models:
+  - name: fact_billboard
+    description: >
+      Aggregated table containing information on music albums, their Billboard chart performance, and their track audio features and segments.

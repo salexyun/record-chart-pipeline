@@ -1,0 +1,11 @@
+.DS_Store
+**__pycache__/
+**.terraform
+**.terraform.lock.*
+*.tfstate
+**logs/
+**plugins/
+**scripts/
+**.env
+*.csv
+*.db

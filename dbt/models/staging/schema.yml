@@ -1,0 +1,237 @@
+version: 2
+
+sources:
+  - name: staging
+    database: de-billboard
+    schema: billboard_200
+    tables:
+      - name: acoustic_features
+      - name: albums
+      - name: segments
+
+models:
+  - name: stg_acoustic_features
+    description: >
+      340,000 rows containing acoustic data for tracks from Billboard 200 albums from 1/5/1963 to 1/19/2019.
+      Each row contains track ID on Spotify, track name, album name, artist name, values for Spotify EchoNest acoustic data
+      (acousticness, danceability, energy, instrumentalness, liveness, loudness, speechiness, key, time signature, and valence),
+      duration in milliseconds, album ID on Spotify, and release date of the album.
+      Contains no null values.
+    columns:
+      - name: spotify_track_id
+        description: The Spotify ID for the track.
+        tests:
+          - not_null:
+              severity: warn
+      - name: spotify_album_id
+        description: The Spotify ID for the album.
+        tests:
+          - not_null:
+              severity: warn
+      - name: artist
+        description: The name of the artist.
+        tests:
+          - not_null:
+              severity: warn
+      - name: track
+        description: The name of the track.
+        tests:
+          - not_null:
+              severity: warn
+      - name: album
+        description: The name of the album.
+        tests:
+          - not_null:
+              severity: warn
+      - name: album_released
+        description: The date the album was first released.
+        tests:
+          - not_null:
+              severity: warn
+      - name: acousticness
+        description: >
+          A confidence measure from 0.0 to 1.0 of whether the track is acoustic.
+          1.0 represents high confidence the track is acoustic.
+          >= 0
+          <= 1
+        tests:
+          - not_null:
+              severity: warn
+      - name: danceability
+        description: >
+          Danceability describes how suitable a track is for dancing based on a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity.
+          A value of 0.0 is least danceable and 1.0 is most danceable.
+        tests:
+          - not_null:
+              severity: warn
+      - name: duration_ms
+        description: The duration of the track in milliseconds.
+        tests:
+          - not_null:
+              severity: warn
+      - name: energy
+        description: >
+          Energy is a measure from 0.0 to 1.0 and represents a perceptual measure of intensity and activity.
+          Typically, energetic tracks feel fast, loud, and noisy.
+          For example, death metal has high energy, while a Bach prelude scores low on the scale.
+          Perceptual features contributing to this attribute include dynamic range, perceived loudness, timbre, onset rate, and general entropy.
+        tests:
+          - not_null:
+              severity: warn
+      - name: instrumentalness
+        description: >
+          Predicts whether a track contains no vocals. "Ooh" and "aah" sounds are treated as instrumental in this context.
+          Rap or spoken word tracks are clearly "vocal".
+          The closer the instrumentalness value is to 1.0, the greater likelihood the track contains no vocal content.
+          Values above 0.5 are intended to represent instrumental tracks, but confidence is higher as the value approaches 1.0.
+        tests:
+          - not_null:
+              severity: warn
+      - name: key
+        description: >
+          The key the track is in. Integers map to pitches using standard Pitch Class notation.
+          E.g. 0 = C, 1 = C♯/D♭, 2 = D, and so on. If no key was detected, the value is -1.
+          >= -1
+          <= 11
+        tests:
+          - not_null:
+              severity: warn
+      - name: liveness
+        description: >
+          Detects the presence of an audience in the recording.
+          Higher liveness values represent an increased probability that the track was performed live.
+          A value above 0.8 provides strong likelihood that the track is live.
+        tests:
+          - not_null:
+              severity: warn
+      - name: loudness
+        description: >
+          The overall loudness of a track in decibels (dB). 
+          Loudness values are averaged across the entire track and are useful for comparing relative loudness of tracks.
+          Loudness is the quality of a sound that is the primary psychological correlate of physical strength (amplitude).
+          Values typically range between -60 and 0 db.
+        tests:
+          - not_null:
+              severity: warn
+      - name: mode
+        description: >
+          Mode indicates the modality (major or minor) of a track, the type of scale from which its melodic content is derived.
+          Major is represented by 1 and minor is 0.
+        tests:
+          - not_null:
+              severity: warn
+      - name: speechiness
+        description: >
+          Speechiness detects the presence of spoken words in a track.
+          The more exclusively speech-like the recording (e.g. talk show, audio book, poetry), the closer to 1.0 the attribute value.
+          Values above 0.66 describe tracks that are probably made entirely of spoken words.
+          Values between 0.33 and 0.66 describe tracks that may contain both music and speech, either in sections or layered, including such cases as rap music.
+          Values below 0.33 most likely represent music and other non-speech-like tracks.
+        tests:
+          - not_null:
+              severity: warn
+      - name: tempo
+        description: >
+          The overall estimated tempo of a track in beats per minute (BPM).
+          In musical terminology, tempo is the speed or pace of a given piece and derives directly from the average beat duration.
+        tests:
+          - not_null:
+              severity: warn
+      - name: time_signature
+        description: >
+          An estimated time signature.
+          The time signature (meter) is a notational convention to specify how many beats are in each bar (or measure).
+          The time signature ranges from 3 to 7 indicating time signatures of "3/4", to "7/4".
+          >= 3
+          <= 7
+        tests:
+          - not_null:
+              severity: warn
+      - name: valence
+        description: >
+          A measure from 0.0 to 1.0 describing the musical positiveness conveyed by a track.
+          Tracks with high valence sound more positive (e.g. happy, cheerful, euphoric), while tracks with low valence sound more negative (e.g. sad, depressed, angry).
+          >= 0
+          <= 1
+        tests:
+          - not_null:
+              severity: warn
+  - name: stg_albums
+    description: >
+      574,000 rows containing all albums in the Billboard 200 from 1/5/1963 to 1/19/2019.
+      Each row contains the album’s place in the charts, the week of the chart, album name, artist name, and where available from Spotify and not null in the table, the number of tracks, and length of the album in milliseconds.
+    columns:
+      - name: id
+        description: The primary key to the table.
+        tests:
+          - unique:
+              severity: warn
+          - not_null:
+              severity: warn
+      - name: album
+        description: The name of the album.
+      - name: artist
+        description: The name of the artist.
+      - name: len_album
+        description: The length of the album in milliseconds.
+      - name: num_tracks
+        description: The number of tracks in the album.
+      - name: chart_week
+        description: The week of the chart.
+      - name: chart_rank
+        description: The album's place in the chart.
+  - name: stg_segments
+    description: >
+      2,821,061 rows of segment data from songs on Billboard 200 albums.
+      Each song on Spotify typically contains upwards of 1000 segments; this table is constituted from a sample of 20 of those segments for each song or the max number of segments, whichever is smaller.
+      Each row contains track ID on Spotify, track name, album name, artist name, the album ID on Spotify, 12-dimensional timbral data, confidence value, duration of the segment, max loudness, time of max loudness, and the start time of max loudness.
+      For more information on these values, see Spotify’s documentation on segments https://developer.spotify.com/documentation/web-api/reference/#/operations/get-audio-analysis
+    columns:
+      - name: primary_key
+        description: The primary key to the table.
+        tests:
+          - unique:
+              severity: warn
+          - not_null:
+              severity: warn
+      - name: spotify_track_id
+        description: The Spotify ID for the track.
+        tests:
+          - not_null:
+              severity: warn
+      - name: spotify_album_id
+        description: The Spotify ID for the album.
+        tests:
+          - not_null:
+              severity: warn
+      - name: artist
+        description: The name of the artist.
+      - name: track
+        description: The name of the song.
+      - name: album
+        description: The name of the album.
+      - name: timbre
+        description: >
+          Timbre is the quality of a musical note or sound that distinguishes different types of musical instruments, or voices.
+          It is a complex notion also referred to as sound color, texture, or tone quality, and is derived from the shape of a segment’s spectro-temporal surface, independently of pitch and loudness.
+          The timbre feature is a vector that includes 12 unbounded values roughly centered around 0. Those values are high level abstractions of the spectral surface, ordered by degree of importance.
+          For completeness however, the first dimension represents the average loudness of the segment; second emphasizes brightness; third is more closely correlated to the flatness of a sound; fourth to sounds with a stronger attack; etc.
+      - name: pitches
+        description: >
+          Pitch content is given by a “chroma” vector, corresponding to the 12 pitch classes C, C#, D to B, with values ranging from 0 to 1 that describe the relative dominance of every pitch in the chromatic scale.
+          For example a C Major chord would likely be represented by large values of C, E and G (i.e. classes 0, 4, and 7).
+          Vectors are normalized to 1 by their strongest dimension, therefore noisy sounds are likely represented by values that are all close to 1, while pure tones are described by one value at 1 (the pitch) and others near 0.
+      - name: confidence
+        description: >
+          The confidence, from 0.0 to 1.0, of the reliability of the segmentation.
+          Segments of the song which are difficult to logically segment (e.g., noise) may correspond to low values in this field.
+          >= 0
+          <= 1
+      - name: duration
+        description: The duration (in seconds) of the segment.
+      - name: loudness_max
+        description: The peak loudness of the segment in decibels (dB). Combined with loudness_start and loudness_max_time, these components can be used to describe the "attack" of the segment.
+      - name: loudness_max_time
+        description: The segment-relative offset of the segment peak loudness in seconds. Combined with loudness_start and loudness_max, these components can be used to desctibe the "attack" of the segment.
+      - name: loudness_start
+        description: The onset loudness of the segment in decibels (dB). Combined with loudness_max and loudness_max_time, these components can be used to describe the "attack" of the segment.
